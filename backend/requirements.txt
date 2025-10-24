@@ -1,3 +1,9 @@
 Flask
 pymongo
+<<<<<<< HEAD
 werkzeug
+flask_pymongo
+flask_cors
+=======
+werkzeug
+>>>>>>> upstream/backend

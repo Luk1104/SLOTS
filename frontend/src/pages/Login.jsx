@@ -22,7 +22,7 @@ const Login = () => {
     setError("");
     setIsLoading(true);
 
-    const endpoint = '/api/login';
+    const endpoint = 'http://localhost:5000/api/login';
 
     try {
       const response = await fetch(endpoint, {
@@ -31,6 +31,7 @@ const Login = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
+        credentials: 'include',
       });
 
       if (response.ok) {
