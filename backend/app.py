@@ -1,19 +1,29 @@
-from flask import Flask, request, jsonify, session
-from flask_pymongo import PyMongo
-from werkzeug.security import generate_password_hash, check_password_hash
 import os
-from pymongo.errors import PyMongoError
 import sys
 import time
+import jwt
+
+from flask import Flask, request, jsonify
+from flask_pymongo import PyMongo
+from pymongo.errors import PyMongoError
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
+from dotenv import load_dotenv
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
-CORS(app, supports_credentials=True)
-
-app.config['MONGO_URI'] = "mongodb://localhost:27017/user_db"
-time.sleep(5)
+load_dotenv()
 try:
+    jwt_secret = os.environ.get('secret')
+    jwt_algorithm = 'HS256'
+except ValueError:
+    print("Invalid secret in .env")
+    sys.exit(1)
+jwt_exp = 3600
+
+CORS(app, supports_credentials=True)
+app.config['MONGO_URI'] = "mongodb://snowflake-db:27017/user_db"
+try:
+    time.sleep(2)
     mongo = PyMongo(app)
     mongo.db.users.find_one({}) 
     print("Connected to MongoDB successfully.")
@@ -53,9 +63,13 @@ def login():
 
     user = users_collection.find_one({'email': email})
     if user and check_password_hash(user['password'], password):
-        session['logged_in'] = True
-        session['email'] = email
-        return jsonify({'message': 'ok'}), 200
+        payload = {
+            'exp': int(time.time()) + jwt_exp,
+            'sub': email
+        }
+        token = jwt.encode(payload, jwt_secret, algorithm=jwt_algorithm)
+        balance = user.get('balance')
+        return jsonify({'token': token, 'balance': balance}), 200
 
     return jsonify({'message': 'Invalid credentials'}), 401
 
