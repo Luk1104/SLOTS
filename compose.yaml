@@ -1,9 +1,25 @@
-version: "3.9"
 services:
-  snowflake:
-    container_name: snowflake
+  frontend:
+    image: snowflake-frontend
+    container_name: snowflake-front
     build:
-      context: .
-      dockerfile: Dockerfile
+      dockerfile: ./frontend/Dockerfile
     ports:
       - "5173:5173"
+  backend:
+    image: snowflake-backend
+    container_name: snowflake-back
+    build:
+      dockerfile: ./backend/Dockerfile
+    ports:
+      - "5000:5000"
+  mongo:
+    image: mongo:latest
+    container_name: snowflake-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

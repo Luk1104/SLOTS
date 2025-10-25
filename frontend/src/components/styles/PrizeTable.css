@@ -94,10 +94,16 @@
 }
 
 .prize-neon {
-  color: #40c9ff; 
-  text-shadow:
-    0 0 5px hsla(195, 100%, 60%, 0.8),
-    0 0 10px hsla(195, 100%, 60%, 0.6);
+  background: linear-gradient(
+    to right,
+    #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 200% auto; /* Make the gradient wider than the text */
+  animation: rainbow-animation 6s linear infinite;
+  text-shadow: none; /* Remove existing text shadow for better rainbow effect */
 }
 
 @keyframes pulse {
@@ -108,5 +114,11 @@
   to {
     transform: scale(1.1);
     opacity: 1;
+  }
+}
+
+@keyframes rainbow-animation {
+  to {
+    background-position: 200% center; /* Move the gradient across the text */
   }
 }

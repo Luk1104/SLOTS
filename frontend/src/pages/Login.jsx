@@ -22,7 +22,7 @@ const Login = () => {
     setError("");
     setIsLoading(true);
 
-    const endpoint = '/api/login';
+    const endpoint = 'http://localhost:5000/api/login';
 
     try {
       const response = await fetch(endpoint, {
@@ -31,11 +31,23 @@ const Login = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
+        credentials: 'include',
       });
 
       if (response.ok) {
         const data = await response.json();
         console.log("Login successful:", data);
+        try {
+          if (data.token) {
+            window.localStorage.setItem('token', data.token);
+          }
+          if (data.balance !== undefined) {
+            window.localStorage.setItem('balance', String(data.balance));
+          }
+        } catch (e) {
+          console.warn('Failed to save auth data to localStorage', e);
+        }
+
         navigate("/");
       } else {
         const errorData = await response.json();
