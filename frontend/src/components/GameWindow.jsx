@@ -55,9 +55,19 @@ export const GameWindow = () => {
       return WIN_MULTIPLIERS[result[0]].message;
     }
     if (result[2] === "❓") {
-      console.log(result);
-      return WIN_MULTIPLIERS[result[2]].message;
+      setTimeout(() => {
+        setReels([result[0], SYMBOLS[4], SYMBOLS[4]]);
+      }, 200);
+      setTimeout(() => {
+        setReels([SYMBOLS[4], SYMBOLS[4], SYMBOLS[4]]);
+      }, 400);
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(WIN_MULTIPLIERS[result[2]].message);
+        }, 600);
+      });
     }
+    
     return "Try again!";
   };
 
@@ -73,7 +83,7 @@ export const GameWindow = () => {
       const interval = setInterval(() => {
         setReels((prev) => {
           const newReels = [...prev];
-          newReels[reelIndex] = SYMBOLS[currentSymbolIndex % (SYMBOLS.length - 1)];
+          newReels[reelIndex] = SYMBOLS[currentSymbolIndex % (SYMBOLS.length-1)];
           return newReels;
         });
         currentSymbolIndex++;
@@ -88,13 +98,13 @@ export const GameWindow = () => {
         });
 
         if (reelIndex === 2) {
-          setTimeout(() => {
+          setTimeout(async () => {
             setIsSpinning(false);
             if (finalBalance !== undefined) {
               window.localStorage.setItem('balance', finalBalance.toString());
               window.dispatchEvent(new Event('storage'));
             }
-            const message = getWinMessage(finalResult);
+            const message = await getWinMessage(finalResult);
 
             if (message !== "Try again!") {
               const overlay = document.createElement("div");
@@ -184,7 +194,7 @@ export const GameWindow = () => {
         setIsSpinning(false);
       }
     } else {
-      const randomResults = Array.from({ length: 3 }, () => Math.floor(Math.random() * (SYMBOLS.length - 1)));
+      const randomResults = Array.from({ length: 3 }, () => Math.floor(Math.random() * SYMBOLS.length-1));
       setSpinResult(randomResults);
       startAnimation(randomResults);
     }
