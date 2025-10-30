@@ -85,7 +85,11 @@ def spin():
 
     data = request.get_json() or {}
     token = data.get('token')
-    payload = jwt.decode(token, jwt_secret, algorithms=jwt_algorithm)
+    
+    try:
+        payload = jwt.decode(token, jwt_secret, algorithms=jwt_algorithm)
+    except:
+        return jsonify({'message': 'Expired Token'}), 402
     #print(payload)
 
     email = payload['sub']
