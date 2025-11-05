@@ -85,6 +85,8 @@ const Chat = () => {
         const data = await response.json();
         setMessages(data.messages || []);
         setNewMessage('');
+      } else if (response.status === 402) {
+        alert('Token expired, please refresh the site to login.');
       } else {
         const errorData = await response.json();
         alert(errorData.message || 'Failed to send message');

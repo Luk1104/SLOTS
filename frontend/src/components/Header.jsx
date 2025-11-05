@@ -1,6 +1,7 @@
 import './styles/Header.css';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode'
 
 function Header() {
     const navigate = useNavigate();
@@ -14,6 +15,20 @@ function Header() {
             setBalance(window.localStorage.getItem('balance') || '0');
         };
         window.addEventListener('storage', onStorage);
+
+        if (token) {
+            const tokenjson = jwtDecode(token);
+            if (tokenjson.exp < Date.now() / 1000) {
+                window.localStorage.removeItem('token');
+                window.localStorage.removeItem('balance');
+                setToken(null);
+                setBalance('0');
+                if (location.pathname !== '/login' && location.pathname !== '/register') {
+                    navigate('/login');
+                }
+            }   
+        }
+        
         return () => window.removeEventListener('storage', onStorage);
     }, []);
 

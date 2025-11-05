@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import "./styles/GameWindow.css";
 
-const SYMBOLS = ["❄️", "☃️", "🧊", "☕"];
+const SYMBOLS = ["❄️", "☃️", "🧊", "☕", "❓"];
 
 const WIN_MULTIPLIERS = {
   "☃️": { message: "🎉 Snowy Win! x1.5" },
   "🧊": { message: "🎉 Cool Win! x2" },
   "☕": { message: "🎉 Hot Win! x5" },
   "❄️": { message: "🎊 SNOWFLAKE MEGA BIG WIN! x20" },
+  "❓": {message: "💀 WHAT EVEN IS THAT WIN!? X100"}
 };
 
 export const GameWindow = () => {
@@ -53,6 +54,20 @@ export const GameWindow = () => {
     if (result[0] === result[1] && result[1] === result[2]) {
       return WIN_MULTIPLIERS[result[0]].message;
     }
+    if (result[2] === "❓") {
+      setTimeout(() => {
+        setReels([result[0], SYMBOLS[4], SYMBOLS[4]]);
+      }, 200);
+      setTimeout(() => {
+        setReels([SYMBOLS[4], SYMBOLS[4], SYMBOLS[4]]);
+      }, 400);
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(WIN_MULTIPLIERS[result[2]].message);
+        }, 600);
+      });
+    }
+    
     return "Try again!";
   };
 
@@ -68,7 +83,7 @@ export const GameWindow = () => {
       const interval = setInterval(() => {
         setReels((prev) => {
           const newReels = [...prev];
-          newReels[reelIndex] = SYMBOLS[currentSymbolIndex % SYMBOLS.length];
+          newReels[reelIndex] = SYMBOLS[currentSymbolIndex % (SYMBOLS.length-1)];
           return newReels;
         });
         currentSymbolIndex++;
@@ -83,13 +98,13 @@ export const GameWindow = () => {
         });
 
         if (reelIndex === 2) {
-          setTimeout(() => {
+          setTimeout(async () => {
             setIsSpinning(false);
             if (finalBalance !== undefined) {
               window.localStorage.setItem('balance', finalBalance.toString());
               window.dispatchEvent(new Event('storage'));
             }
-            const message = getWinMessage(finalResult);
+            const message = await getWinMessage(finalResult);
 
             if (message !== "Try again!") {
               const overlay = document.createElement("div");
@@ -148,8 +163,19 @@ export const GameWindow = () => {
           headers,
           body: JSON.stringify({ token, bet }),
         })
-          .then((r) => r.json().catch(() => ({ error: "Invalid JSON response" })))
+          .then((r) => {
+            if (r.status === 402) {
+              setErrorMessage('Session expired, please refresh site.');
+              setIsSpinning(false);
+              return null;
+            }
+            if (!r.ok) {
+              return r.json().catch(() => { throw new Error('Server returned an error') });
+            }
+            return r.json().catch(() => ({ error: "Invalid JSON response" }));
+          })
           .then((data) => {
+            if (!data) return;
             console.log('spin response', data);
             if (data.result) {
               const storedBalance = parseFloat(window.localStorage.getItem('balance')) || 0;
@@ -157,7 +183,7 @@ export const GameWindow = () => {
               window.localStorage.setItem('balance', newBalance.toString());
               window.dispatchEvent(new Event('storage'));
 
-              const backendToFrontendMapping = { 0: 1, 1: 2, 2: 3, 3: 0 };
+              const backendToFrontendMapping = { 0: 1, 1: 2, 2: 3, 3: 0, 4: 4 };
               const resultIndices = Array.from(data.result, (s) => parseInt(s, 10));
               const frontendIndices = resultIndices.map(i => backendToFrontendMapping[i]);
               
@@ -179,7 +205,7 @@ export const GameWindow = () => {
         setIsSpinning(false);
       }
     } else {
-      const randomResults = Array.from({ length: 3 }, () => Math.floor(Math.random() * SYMBOLS.length));
+      const randomResults = Array.from({ length: 3 }, () => Math.floor(Math.random() * SYMBOLS.length-1));
       setSpinResult(randomResults);
       startAnimation(randomResults);
     }
