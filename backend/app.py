@@ -25,7 +25,7 @@ except ValueError:
 jwt_exp = 3600
 
 CORS(app, supports_credentials=True, origins=["http://localhost:5000", "http://localhost:5173"])
-app.config['MONGO_URI'] = "mongodb://snowflake-db:27017/user_db"
+app.config['MONGO_URI'] = mongodb-service.default:27017 #"mongodb://snowflake-db:27017/user_db"
 try:
     time.sleep(2)
     mongo = PyMongo(app)
@@ -233,4 +233,4 @@ def main():
     return jsonify({'message': 'API running'}), 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)
