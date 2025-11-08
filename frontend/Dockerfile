@@ -7,6 +7,9 @@ COPY frontend/ /app
 
 EXPOSE 5173
 
-RUN npm install
+RUN apt update && apt install -y python3
+RUN npm run build
 
-CMD ["npm", "run", "dev", "--", "--host"]
+WORKDIR /app/dist
+
+CMD ["python", "-m", "http.server", "5173"]

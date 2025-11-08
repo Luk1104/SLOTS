@@ -36,6 +36,12 @@ const Register = () => {
       return;
     }
 
+    const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{12,}$/;
+    if (!passwordRegex.test(password)) {
+      setError("Password is required to have 12 characters with at least one number and one special character.");
+      return;
+    }
+
     setIsLoading(true); 
     const endpoint = 'http://localhost:5000/api/register'; 
 
