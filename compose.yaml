@@ -14,7 +14,7 @@ services:
     ports:
       - "5000:5000"
   mongo:
-    image: mongo:4.4
+    image: mongo:8.2
     container_name: snowflake-db
     ports:
       - "27017:27017"
