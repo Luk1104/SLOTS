@@ -3,7 +3,7 @@ FROM node:trixie-slim
 
 WORKDIR /app
 
-COPY frontend/ /app
+COPY . /app
 
 EXPOSE 5173
 
