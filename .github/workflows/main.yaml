@@ -43,8 +43,8 @@ jobs:
     needs: [build]
 
     env:
-      BACKEND_DEPLOYMENT: snowflake-back
-      FRONTEND_DEPLOYMENT: snowflake-front
+      BACKEND_DEPLOYMENT: deployment/snowflake-back
+      FRONTEND_DEPLOYMENT: deployment/snowflake-front
 
     steps:
 
