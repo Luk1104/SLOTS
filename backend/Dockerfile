@@ -3,7 +3,7 @@ FROM python:slim-trixie
 
 WORKDIR /app
 
-COPY backend/ /app
+COPY . /app
 
 RUN ["pip", "install", "--no-cache-dir", "-r", "requirements.txt"]
 

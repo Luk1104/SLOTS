@@ -5,3 +5,4 @@ flask_pymongo
 flask_cors
 dotenv
 pyjwt
+gunicorn

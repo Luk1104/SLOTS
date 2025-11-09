@@ -24,8 +24,8 @@ except ValueError:
     sys.exit(1)
 jwt_exp = 3600
 
-CORS(app, supports_credentials=True, origins=["http://localhost:5000", "http://localhost:5173"])
-app.config['MONGO_URI'] = mongodb-service.default:27017 #"mongodb://snowflake-db:27017/user_db"
+CORS(app, supports_credentials=True, origins=["http://localhost:5000", "http://frontend-service:5173"])
+app.config['MONGO_URI'] = "mongodb-service.default:27017/database" #"mongodb://snowflake-db:27017/user_db"
 try:
     time.sleep(2)
     mongo = PyMongo(app)
