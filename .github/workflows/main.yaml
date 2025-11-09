@@ -9,8 +9,8 @@ jobs:
     runs-on: self-hosted
 
     env:
-      BACKEND_IMAGE: registry-service.default.svc.cluster.local:32000/snowflake-back:latest
-      FRONTEND_IMAGE: registry-service.default.svc.cluster.local:32000/snowflake-front:latest
+      BACKEND_IMAGE: localhost:32000/snowflake-back:latest
+      FRONTEND_IMAGE: localhost:32000/snowflake-front:latest
       DOCKER_TLS_CERTDIR: "/certs"
 
     services:
