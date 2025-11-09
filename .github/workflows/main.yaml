@@ -1,33 +1,37 @@
-name: Container push to self-hosted registry (on a cluster)
-variables:
-  BACKEND_IMAGE: snowflake-back:latest
-  FRONTEND_IMAGE: snowflake-front:latest
-
-stages:
-  - build
-  - scan
-  - deploy
-
 on:
   push:
     branches: [ production ]
   pull_request:
     branches: [ production ]
 
-build_image:
-  stage: build
-  image: docker:29.0.0
-  runs-on: self-hosted
-  services:
-    - docker:29.0.0-dind
+jobs:
+  build:
+    runs-on: self-hosted
 
-  before_script:
+    env:
+      BACKEND_IMAGE: registry-service.default.svc.cluster.local:32000/snowflake-back:latest
+      FRONTEND_IMAGE: registry-service.default.svc.cluster.local:32000/snowflake-front:latest
+      DOCKER_TLS_CERTDIR: "/certs"
 
-  variables:
-    DOCKER_TLS_CERTDIR: "/certs"
+    services:
+      docker:
+        image: docker-29.0.0-dind
+        options: --privileged
 
-  script:
-    - docker build -t $FRONTEND_IMAGE .
-    - docker push localhost:32000/$FRONTEND_IMAGE
-    - docker build -t $BACKEND_IMAGE .
-    - docker push localhost:32000/$BACKEND_IMAGE
+    steps:
+      - name: Building and pushing backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: ${{ env.BACKEND_IMAGE }}
+
+      - name: Building and pushing fronted image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: ${{ env.FRONTEND_IMAGE }}
+
