@@ -15,7 +15,7 @@ jobs:
 
     services:
       docker:
-        image: docker-28.2.2-dind
+        image: docker:29.0.0-rc.2-dind
         options: --privileged
 
     steps:
