@@ -19,6 +19,10 @@ jobs:
         options: --privileged
 
     steps:
+
+      - name: Download code (checkout)
+        uses: actions/checkout@v4
+
       - name: Building and pushing backend image
         uses: docker/build-push-action@v5
         with:
