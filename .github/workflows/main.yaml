@@ -1,8 +1,6 @@
 on:
   push:
     branches: [ production ]
-  pull_request:
-    branches: [ production ]
 
 jobs:
   build:
@@ -39,3 +37,19 @@ jobs:
           push: true
           tags: ${{ env.FRONTEND_IMAGE }}
 
+  deploy:
+    runs-on: self-hosted
+
+    needs: [build]
+
+    env:
+      BACKEND_DEPLOYMENT: snowflake-back
+      FRONTEND_DEPLOYMENT: snowflake-front
+
+    steps:
+
+      - name: Restart front deployment
+        run: microk8s kubectl rollout restart ${{ env.FRONTEND_DEPLOYMENT }}
+
+      - name: Restart back deployment
+        run: microk8s kubectl rollout restart ${{ env.BACKEND_DEPLOYMENT }}
