@@ -158,7 +158,7 @@ export const GameWindow = () => {
       try {
         const headers = { 'Content-Type': 'application/json' };
         headers['Authorization'] = `Bearer ${token}`;
-        fetch('http://backend-service:5000/api/spin', {
+        fetch('/api/spin', {
           method: 'POST',
           headers,
           body: JSON.stringify({ token, bet }),
@@ -205,7 +205,7 @@ export const GameWindow = () => {
         setIsSpinning(false);
       }
     } else {
-      const randomResults = Array.from({ length: 3 }, () => Math.floor(Math.random() * SYMBOLS.length-1));
+      const randomResults = Array.from({ length: 3 }, () => Math.floor(Math.random() * (SYMBOLS.length-1)));
       setSpinResult(randomResults);
       startAnimation(randomResults);
     }

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Snowfall } from "../components/Snowfall";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
+import { Link } from "react-router-dom";
 
 import "./styles/Register.css";
 
@@ -36,14 +37,14 @@ const Register = () => {
       return;
     }
 
-    const passwordRegex = /^.{12}$/;
+    const passwordRegex = /^.{12,}$/;
     if (!passwordRegex.test(password)) {
-      setError("Password is required to have 12 characters.");
+      setError("Password is required to have at least 12 characters.");
       return;
     }
 
     setIsLoading(true); 
-    const endpoint = 'http://backend-service:5000/api/register'; 
+    const endpoint = '/api/register'; 
 
     try {
       const response = await fetch(endpoint, {
@@ -153,9 +154,9 @@ const Register = () => {
 
             <p className="login-prompt">
               Already have an account?{" "}
-              <a href="/login" className="login-link">
-                Log in
-              </a>
+              <Link to="/login" className="login-link">
+              Log in
+              </Link>
             </p>
           </form>
         </div>

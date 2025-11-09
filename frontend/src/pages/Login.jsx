@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Snowfall } from "../components/Snowfall";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
+import { Link } from "react-router-dom";
 
 import "./styles/Login.css";
 
@@ -31,7 +32,7 @@ const Login = () => {
     setError("");
     setIsLoading(true);
 
-    const endpoint = 'http://backend-service:5000/api/login';
+    const endpoint = '/api/login';
   
     try {
       const response = await fetch(endpoint, {
@@ -134,9 +135,9 @@ const Login = () => {
 
             <p className="signup-prompt">
               Don't have an account?{" "}
-              <a href="/register" className="signup-link">
-                Sign up
-              </a>
+              <Link to="/register" className="signup-link">
+              Register
+              </Link>
             </p>
           </form>
         </div>
