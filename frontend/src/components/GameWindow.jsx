@@ -34,7 +34,7 @@ export const GameWindow = () => {
       setButtonText('Spinning...');
       return;
     }
-    setButtonText(isLoggedIn ? 'Spin' : 'demo spin');
+    setButtonText(isLoggedIn ? 'Spin' : 'TEST ZMIANY obrazu'); // demo spin
   }, [isLoggedIn, isSpinning]);
 
   const handleBetChange = (e) => {
