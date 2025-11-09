@@ -1,0 +1,33 @@
+name: Container push to self-hosted registry (on a cluster)
+variables:
+  BACKEND_IMAGE: snowflake-back:latest
+  FRONTEND_IMAGE: snowflake-front:latest
+
+stages:
+  - build
+  - scan
+  - deploy
+
+on:
+  push:
+    branches: [ production ]
+  pull_request:
+    branches: [ production ]
+
+build_image:
+  stage: build
+  image: docker:29.0.0
+  runs-on: self-hosted
+  services:
+    - docker:29.0.0-dind
+
+  before_script:
+
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+
+  script:
+    - docker build -t $FRONTEND_IMAGE .
+    - docker push localhost:32000/$FRONTEND_IMAGE
+    - docker build -t $BACKEND_IMAGE .
+    - docker push localhost:32000/$BACKEND_IMAGE
