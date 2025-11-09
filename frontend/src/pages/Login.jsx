@@ -31,8 +31,8 @@ const Login = () => {
     setError("");
     setIsLoading(true);
 
-    const endpoint = 'http://localhost:5000/api/login';
-
+    const endpoint = 'http://backend-service:5000/api/login';
+  
     try {
       const response = await fetch(endpoint, {
         method: 'POST',

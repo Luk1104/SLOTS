@@ -45,7 +45,7 @@ const Chat = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/read');
+        const response = await fetch('http://backend-service:5000/api/read');
         if (response.ok) {
           const data = await response.json();
           setMessages(data.messages || []);
@@ -72,7 +72,7 @@ const Chat = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/write', {
+      const response = await fetch('http://backend-service:5000/api/write', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -36,14 +36,14 @@ const Register = () => {
       return;
     }
 
-    const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).{12,}$/;
+    const passwordRegex = /^.{12}$/;
     if (!passwordRegex.test(password)) {
-      setError("Password is required to have 12 characters with at least one number and one special character.");
+      setError("Password is required to have 12 characters.");
       return;
     }
 
     setIsLoading(true); 
-    const endpoint = 'http://localhost:5000/api/register'; 
+    const endpoint = 'http://backend-service:5000/api/register'; 
 
     try {
       const response = await fetch(endpoint, {

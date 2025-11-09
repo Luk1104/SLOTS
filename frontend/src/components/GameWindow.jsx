@@ -158,7 +158,7 @@ export const GameWindow = () => {
       try {
         const headers = { 'Content-Type': 'application/json' };
         headers['Authorization'] = `Bearer ${token}`;
-        fetch('http://localhost:5000/api/spin', {
+        fetch('http://backend-service:5000/api/spin', {
           method: 'POST',
           headers,
           body: JSON.stringify({ token, bet }),
