@@ -1,15 +1,10 @@
 # Frontend container
 FROM node:trixie-slim
-
-WORKDIR /app
-
 COPY . /app
-
-EXPOSE 5173
-
-RUN apt update && apt install -y python3
+WORKDIR /app
 RUN npm install && npm run build
 
-WORKDIR /app/dist
-
-CMD ["python3", "-m", "http.server", "5173"]
+FROM nginx:trixie
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 5173
+CMD ["nginx", "-g", "daemon off;"]
