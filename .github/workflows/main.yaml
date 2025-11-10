@@ -85,9 +85,9 @@ jobs:
         
       - name: Push Docker images
         run: |
-          docker push ${{ needs.build.outputs.localhost:32000/snowflake-back:latest}}
+          docker push localhost:32000/snowflake-back:latest
           
-          docker push ${{ needs.build.outputs.localhost:32000/snowflake-front:latest }}
+          docker push localhost:32000/snowflake-front:latest
 
   deploy:
     runs-on: self-hosted
