@@ -85,10 +85,9 @@ jobs:
         
       - name: Push Docker images
         run: |
-          docker push ${{ needs.build.outputs.backend_image_tag }}
+          docker push ${{ needs.build.outputs.localhost:32000/snowflake-back:latest}}
           
-          # Poprawiona literówka (frontend_image_tag)
-          docker push ${{ needs.build.outputs.frontend_image_tag }}
+          docker push ${{ needs.build.outputs.localhost:32000/snowflake-front:latest }}
 
   deploy:
     runs-on: self-hosted
