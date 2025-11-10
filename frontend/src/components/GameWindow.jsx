@@ -35,11 +35,7 @@ export const GameWindow = () => {
       setButtonText("Spinning...");
       return;
     }
-<<<<<<< HEAD
-    setButtonText(isLoggedIn ? 'Spin' : 'demo spin'); // demo spin
-=======
     setButtonText(isLoggedIn ? "Spin" : "demo spin"); // demo spin
->>>>>>> 64cd5d6 (remove stupid commits)
   }, [isLoggedIn, isSpinning]);
 
   const handleBetChange = (e) => {
