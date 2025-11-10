@@ -7,8 +7,8 @@ jobs:
     runs-on: self-hosted
     
     outputs:
-      backend_image_tag: 'snowflake-back:latest'
-      frontend_image_tag: 'snowflake-front:latest'
+      backend_image_tag: 'localhost:32000/snowflake-back:latest'
+      frontend_image_tag: 'localhost:32000/snowflake-front:latest'
 
     steps:
       - name: Download code (checkout)
@@ -85,9 +85,9 @@ jobs:
         
       - name: Push Docker images
         run: |
-          docker push localhost:32000/snowflake-back:latest
+          docker push ${{ needs.build.outputs.backend_image_tag }}
           
-          docker push localhost:32000/snowflake-front:latest
+          docker push ${{ needs.build.outputs.frontend_image_tag }}
 
   deploy:
     runs-on: self-hosted
