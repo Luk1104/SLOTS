@@ -12,7 +12,6 @@ const WIN_MULTIPLIERS = {
 };
 
 export const GameWindow = () => {
-  const [spinResult, setSpinResult] = useState([]);
   const [isSpinning, setIsSpinning] = useState(false);
   const [reels, setReels] = useState([SYMBOLS[0], SYMBOLS[0], SYMBOLS[0]]);
   const [betAmount, setBetAmount] = useState("0.00");
@@ -206,7 +205,6 @@ export const GameWindow = () => {
                 (i) => backendToFrontendMapping[i],
               );
 
-              setSpinResult(frontendIndices);
               startAnimation(frontendIndices, data.balance);
             } else {
               setErrorMessage(data.error || "Something went wrong");
@@ -227,7 +225,6 @@ export const GameWindow = () => {
       const randomResults = Array.from({ length: 3 }, () =>
         Math.floor(Math.random() * (SYMBOLS.length - 1)),
       );
-      setSpinResult(randomResults);
       startAnimation(randomResults);
     }
   };
