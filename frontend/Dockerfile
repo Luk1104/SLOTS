@@ -1,10 +1,9 @@
-# Frontend container
-FROM node:alpine
-COPY . /app
+FROM node:alpine AS build
 WORKDIR /app
+COPY . /app
 RUN npm install && npm run build
-WORKDIR /app/dist
-RUN apk update && apk add nginx
+FROM nginx:alpine
+COPY --from=build /app/dist /app/dist
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 5173
 CMD ["nginx", "-g", "daemon off;"]
