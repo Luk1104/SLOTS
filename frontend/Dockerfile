@@ -1,5 +1,5 @@
 # Frontend container
-FROM node:trixie-slim
+FROM node:alpine
 COPY . /app
 WORKDIR /app
 RUN npm install && npm run build
