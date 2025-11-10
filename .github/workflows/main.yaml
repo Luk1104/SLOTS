@@ -38,6 +38,33 @@ jobs:
           name: docker-images-multi
           path: images.tar
 
+  SAST:
+    runs-on: self-hosted
+
+    needs: [build]
+
+    steps:
+      - name: Download code (checkout)
+        uses: actions/checkout@v4
+
+      - name: Run semgrep (frontend code scan)
+        uses: semgrep/semgrep-action@v2
+        continue-on-error: true
+        with:
+          wokring-directory: ./fronted
+          config: |
+            p/react
+            p/javascript
+
+      - name: Run bandit (backend code scan)
+        uses: semgrep/semgrep-action@v2
+        continue-on-error: true
+        with:
+          working-directory: ./backend
+          config: |
+            p/python
+            p/flask
+
   trivy-scan:
     runs-on: self-hosted
     needs: [build]
@@ -71,7 +98,7 @@ jobs:
 
   push:
     runs-on: self-hosted
-    needs: [build, trivy-scan]
+    needs: [build, trivy-scan, SAST]
 
     steps:
 
