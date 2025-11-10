@@ -17,11 +17,11 @@ jobs:
       - name: Set image tags
         id: set-tags
         run: |
-          echo "BACKEND_TAG=snowflake-back:latest" >> $GITHUB_OUTPUT
-          echo "FRONTEND_TAG=snowflake-front:latest" >> $GITHUB_OUTPUT
+          echo "BACKEND_TAG=localhost:32000/snowflake-back:latest" >> $GITHUB_OUTPUT
+          echo "FRONTEND_TAG=localhost:32000/snowflake-front:latest" >> $GITHUB_OUTPUT
 
       - name: Building backend image
-        run: docker build -t ${{ steps.set-tags.outputs.BACKEND_TAG }} ./backend
+        run: docker build -t ${{ build.set-tags.outputs.BACKEND_TAG }} ./backend
 
       - name: Building frontend image
         run: docker build -t ${{ steps.set-tags.outputs.FRONTEND_TAG }} ./frontend
