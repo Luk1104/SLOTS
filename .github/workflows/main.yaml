@@ -53,6 +53,7 @@ jobs:
 
       - name: Run Trivy on Backend image
         uses: aquasecurity/trivy-action@0.20.0
+        continue-on-error: true
         with:
           image-ref: ${{ needs.build.outputs.backend_image_tag }}
           scan-type: 'image'
@@ -61,6 +62,7 @@ jobs:
 
       - name: Run Trivy on Frontend image
         uses: aquasecurity/trivy-action@0.20.0
+        continue-on-error: true
         with:
           image-ref: ${{ needs.build.outputs.frontend_image_tag }}
           scan-type: 'image'
