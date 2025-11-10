@@ -108,7 +108,7 @@ jobs:
 
   push:
     runs-on: self-hosted
-    needs: [build, trivy-scan, SAST]
+    needs: [build, SCA_and_Image-Trivy, SAST]
 
     steps:
 
