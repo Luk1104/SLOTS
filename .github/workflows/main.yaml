@@ -51,12 +51,12 @@ jobs:
         uses: semgrep/semgrep-action@v1
         continue-on-error: true
         with:
-          wokring-directory: ./fronted
+          working-directory: ./fronted
           config: |
             p/react
             p/javascript
 
-      - name: Run bandit (backend code scan)
+      - name: Run semgrep (backend code scan)
         uses: semgrep/semgrep-action@v1
         continue-on-error: true
         with:
@@ -65,7 +65,7 @@ jobs:
             p/python
             p/flask
 
-  trivy-scan:
+  SCA+Image-scan:
     runs-on: self-hosted
     needs: [build]
 
@@ -95,6 +95,16 @@ jobs:
           scan-type: 'image'
           severity: 'HIGH,CRITICAL'
           exit-code: '1'
+
+      - name: SCA scan using trivy
+        uses: aquasecurity/trivy-action@0.20.0
+        continue-on-error: true
+        with:
+          scan-type: 'fs'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+          ignore-unfixed: true
+          scan-ref: '.'
 
   push:
     runs-on: self-hosted
