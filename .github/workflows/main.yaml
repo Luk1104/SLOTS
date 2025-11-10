@@ -70,19 +70,21 @@ jobs:
 
     needs: [trivy-scan]
 
-    - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: docker-images-multi
+    steps:
+    
+      - name: Download artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: docker-images-multi
 
-      - name: Load Docker images
-        run: docker load -i images.tar
-        
-      - name: Push Docker images
-        run: |
-          docker push ${{ needs.build.outputs.backend_image_tag }}
+        - name: Load Docker images
+          run: docker load -i images.tar
           
-          docker push ${{ needs.build.outputs.fronted_image_tag }}
+        - name: Push Docker images
+          run: |
+            docker push ${{ needs.build.outputs.backend_image_tag }}
+            
+            docker push ${{ needs.build.outputs.fronted_image_tag }}
 
     
 
