@@ -8,7 +8,7 @@ const WIN_MULTIPLIERS = {
   "🧊": { message: "🎉 Cool Win! x2" },
   "☕": { message: "🎉 Hot Win! x5" },
   "❄️": { message: "🎊 SNOWFLAKE MEGA BIG WIN! x20" },
-  "❓": {message: "💀 WHAT EVEN IS THAT WIN!? X100"}
+  "❓": { message: "💀 WHAT EVEN IS THAT WIN!? X100" },
 };
 
 export const GameWindow = () => {
@@ -18,30 +18,40 @@ export const GameWindow = () => {
   const [betAmount, setBetAmount] = useState("0.00");
   const [buttonText, setButtonText] = useState("Spin");
   const [errorMessage, setErrorMessage] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(() => !!window.localStorage.getItem('token'));
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => !!window.localStorage.getItem("token"),
+  );
 
   useEffect(() => {
     const onStorage = (e) => {
-      if (e.key === 'token') setIsLoggedIn(!!e.newValue);
+      if (e.key === "token") setIsLoggedIn(!!e.newValue);
     };
-    window.addEventListener('storage', onStorage);
-    setIsLoggedIn(!!window.localStorage.getItem('token'));
-    return () => window.removeEventListener('storage', onStorage);
+    window.addEventListener("storage", onStorage);
+    setIsLoggedIn(!!window.localStorage.getItem("token"));
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   useEffect(() => {
     if (isSpinning) {
-      setButtonText('Spinning...');
+      setButtonText("Spinning...");
       return;
     }
+<<<<<<< HEAD
     setButtonText(isLoggedIn ? 'Spin' : 'demo spin'); // demo spin
+=======
+    setButtonText(isLoggedIn ? "Spin" : "demo spin"); // demo spin
+>>>>>>> 64cd5d6 (remove stupid commits)
   }, [isLoggedIn, isSpinning]);
 
   const handleBetChange = (e) => {
     let value = e.target.value;
     let normalizedValue = value.replace(",", ".");
     const regex = /^\d*\.?\d*$/;
-    if (!regex.test(normalizedValue) && normalizedValue !== "" && normalizedValue !== ".")
+    if (
+      !regex.test(normalizedValue) &&
+      normalizedValue !== "" &&
+      normalizedValue !== "."
+    )
       return;
 
     const digitsOnly = normalizedValue.replace(".", "");
@@ -67,7 +77,7 @@ export const GameWindow = () => {
         }, 600);
       });
     }
-    
+
     return "Try again!";
   };
 
@@ -83,7 +93,8 @@ export const GameWindow = () => {
       const interval = setInterval(() => {
         setReels((prev) => {
           const newReels = [...prev];
-          newReels[reelIndex] = SYMBOLS[currentSymbolIndex % (SYMBOLS.length-1)];
+          newReels[reelIndex] =
+            SYMBOLS[currentSymbolIndex % (SYMBOLS.length - 1)];
           return newReels;
         });
         currentSymbolIndex++;
@@ -101,8 +112,8 @@ export const GameWindow = () => {
           setTimeout(async () => {
             setIsSpinning(false);
             if (finalBalance !== undefined) {
-              window.localStorage.setItem('balance', finalBalance.toString());
-              window.dispatchEvent(new Event('storage'));
+              window.localStorage.setItem("balance", finalBalance.toString());
+              window.dispatchEvent(new Event("storage"));
             }
             const message = await getWinMessage(finalResult);
 
@@ -143,12 +154,13 @@ export const GameWindow = () => {
   const spin = () => {
     if (isSpinning) return;
     setErrorMessage("");
-    const token = window.localStorage.getItem('token');
-    const bet = parseFloat(betAmount.toString().replace(',', '.')) || 0;
+    const token = window.localStorage.getItem("token");
+    const bet = parseFloat(betAmount.toString().replace(",", ".")) || 0;
     if (token) {
-      const storedBalance = parseFloat(window.localStorage.getItem('balance')) || 0;
+      const storedBalance =
+        parseFloat(window.localStorage.getItem("balance")) || 0;
       if (bet > storedBalance) {
-        setErrorMessage('broke ass');
+        setErrorMessage("broke ass");
         return;
       }
     }
@@ -156,56 +168,65 @@ export const GameWindow = () => {
     setIsSpinning(true);
     if (token) {
       try {
-        const headers = { 'Content-Type': 'application/json' };
-        headers['Authorization'] = `Bearer ${token}`;
-        fetch('/api/spin', {
-          method: 'POST',
+        const headers = { "Content-Type": "application/json" };
+        headers["Authorization"] = `Bearer ${token}`;
+        fetch("/api/spin", {
+          method: "POST",
           headers,
           body: JSON.stringify({ token, bet }),
         })
           .then((r) => {
             if (r.status === 402) {
-              setErrorMessage('Session expired, please refresh site.');
+              setErrorMessage("Session expired, please refresh site.");
               setIsSpinning(false);
               return null;
             }
             if (!r.ok) {
-              return r.json().catch(() => { throw new Error('Server returned an error') });
+              return r.json().catch(() => {
+                throw new Error("Server returned an error");
+              });
             }
             return r.json().catch(() => ({ error: "Invalid JSON response" }));
           })
           .then((data) => {
             if (!data) return;
-            console.log('spin response', data);
+            console.log("spin response", data);
             if (data.result) {
-              const storedBalance = parseFloat(window.localStorage.getItem('balance')) || 0;
+              const storedBalance =
+                parseFloat(window.localStorage.getItem("balance")) || 0;
               const newBalance = storedBalance - bet;
-              window.localStorage.setItem('balance', newBalance.toString());
-              window.dispatchEvent(new Event('storage'));
+              window.localStorage.setItem("balance", newBalance.toString());
+              window.dispatchEvent(new Event("storage"));
 
               const backendToFrontendMapping = { 0: 1, 1: 2, 2: 3, 3: 0, 4: 4 };
-              const resultIndices = Array.from(data.result, (s) => parseInt(s, 10));
-              const frontendIndices = resultIndices.map(i => backendToFrontendMapping[i]);
-              
+              const resultIndices = Array.from(data.result, (s) =>
+                parseInt(s, 10),
+              );
+              const frontendIndices = resultIndices.map(
+                (i) => backendToFrontendMapping[i],
+              );
+
               setSpinResult(frontendIndices);
               startAnimation(frontendIndices, data.balance);
             } else {
-              setErrorMessage(data.error || 'Something went wrong');
+              setErrorMessage(data.error || "Something went wrong");
               setIsSpinning(false);
             }
           })
           .catch((err) => {
-            console.error('spin request failed', err);
-            setErrorMessage('Something went wrong');
+            console.error("spin request failed", err);
+            setErrorMessage("Something went wrong");
             setIsSpinning(false);
           });
       } catch (e) {
-        console.error('failed to send spin request', e);
-        setErrorMessage('Something went wrong');
+        console.error("failed to send spin request", e);
+        setErrorMessage("Something went wrong");
         setIsSpinning(false);
       }
     } else {
-      const randomResults = Array.from({ length: 3 }, () => Math.floor(Math.random() * (SYMBOLS.length-1)));
+      const randomResults = Array.from({ length: 3 }, () =>
+        Math.floor(Math.random() * (SYMBOLS.length - 1)),
+      );
       setSpinResult(randomResults);
       startAnimation(randomResults);
     }
@@ -213,8 +234,8 @@ export const GameWindow = () => {
 
   return (
     <div className="slot-machine-container">
-    <div className="slot-machine">
-      <div className="reels-container">
+      <div className="slot-machine">
+        <div className="reels-container">
           {reels.map((symbol, index) => (
             <div key={index} className="reel">
               <div className={`reel-symbol ${isSpinning ? "spinning" : ""}`}>
@@ -253,11 +274,11 @@ export const GameWindow = () => {
             className="spin-button"
             onMouseEnter={() => {
               if (isSpinning) return;
-              if (isLoggedIn) setButtonText('Spin 🤑');
+              if (isLoggedIn) setButtonText("Spin 🤑");
             }}
             onMouseLeave={() => {
               if (isSpinning) return;
-              setButtonText(isLoggedIn ? 'Spin' : 'demo spin');
+              setButtonText(isLoggedIn ? "Spin" : "demo spin");
             }}
           >
             {buttonText}
