@@ -6,41 +6,90 @@ jobs:
   build:
     runs-on: self-hosted
 
-    env:
-      BACKEND_IMAGE: localhost:32000/snowflake-back:latest
-      FRONTEND_IMAGE: localhost:32000/snowflake-front:latest
-      DOCKER_TLS_CERTDIR: "/certs"
-
     services:
       docker:
         image: docker:29.0.0-rc.2-dind
         options: --privileged
+
+    outputs:
+      backend_image_tag: ${{ steps.set-tags.outputs.snowflake-back:latest }}
+      frontend_image_tag: ${{ steps.set-tags.outputs.snowflake-front:latest }}
 
     steps:
 
       - name: Download code (checkout)
         uses: actions/checkout@v4
 
-      - name: Building and pushing backend image
-        uses: docker/build-push-action@v5
+      - name: Building backend image
         with:
           context: ./backend
-          file: ./backend/Dockerfile
-          push: true
-          tags: ${{ env.BACKEND_IMAGE }}
+          run: docker build -t ${{ steps.set-tags.outputs.snowflake-back:latest }} .
 
-      - name: Building and pushing fronted image
-        uses: docker/build-push-action@v5
+      - name: Building fronted image
         with:
           context: ./frontend
-          file: ./frontend/Dockerfile
-          push: true
-          tags: ${{ env.FRONTEND_IMAGE }}
+          run: docker build -t ${{ steps.set-tags.outputs.snowflake-front:latest }} .
+
+      - name: Save Docker images to one file
+        run: |
+          docker save -o images.tar \
+            ${{ steps.set-tags.outputs.snowflake-back:latest }} \
+            ${{ steps.set-tags.outputs.snowflake-front:latest }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-images-multi
+          path: images.tar
+
+  trivy-scan:
+    runs-on: self-hosted
+
+    needs: [build]
+
+    steps:
+
+      - name: Run Trivy on Backend image
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: ${{ steps.set-tags.outputs.snowflake-back:latest }}
+          scan-type: 'image'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+
+      - name: Run Trivy on Fronted image
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: ${{ steps.set-tags.outputs.snowflake-front:latest }}
+          scan-type: 'image'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '1'
+
+  push:
+    runs-on: self-hosted
+
+    needs: [trivy-scan]
+
+    - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-images-multi
+
+      - name: Load Docker images
+        run: docker load -i images.tar
+        
+      - name: Push Docker images
+        run: |
+          docker push ${{ needs.build.outputs.backend_image_tag }}
+          
+          docker push ${{ needs.build.outputs.fronted_image_tag }}
+
+    
 
   deploy:
     runs-on: self-hosted
 
-    needs: [build]
+    needs: [push]
 
     env:
       BACKEND_DEPLOYMENT: deployment/snowflake-back
