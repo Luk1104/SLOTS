@@ -96,6 +96,9 @@ jobs:
           severity: 'HIGH,CRITICAL'
           exit-code: '1'
 
+      - name: Download code (checkout)
+        uses: actions/checkout@v4
+
       - name: SCA scan using trivy
         uses: aquasecurity/trivy-action@0.20.0
         continue-on-error: true
