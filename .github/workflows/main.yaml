@@ -21,7 +21,7 @@ jobs:
           echo "FRONTEND_TAG=localhost:32000/snowflake-front:latest" >> $GITHUB_OUTPUT
 
       - name: Building backend image
-        run: docker build -t ${{ build.set-tags.outputs.BACKEND_TAG }} ./backend
+        run: docker build -t ${{ steps.set-tags.outputs.BACKEND_TAG }} ./backend
 
       - name: Building frontend image
         run: docker build -t ${{ steps.set-tags.outputs.FRONTEND_TAG }} ./frontend
