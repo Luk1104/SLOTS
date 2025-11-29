@@ -90,6 +90,9 @@ async def deposit(users_collection, tx_hashed_collection, data, token, jwt_secre
         payload = jwt.decode(token, jwt_secret, algorithms=[jwt_algorithm])
     except Exception:
         return jsonify({'message': 'Expired Token'}), 402
+    
+    for used_hash in tx_hashed_collection.find({'txHash': txHash}):
+        return jsonify({'message': 'Transaction has already been sent'}), 402
 
     email = payload['sub']
     user = users_collection.find_one({'email': email})
