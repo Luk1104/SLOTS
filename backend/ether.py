@@ -101,6 +101,8 @@ async def deposit(users_collection, tx_hashed_collection, data, token, jwt_secre
     print (tx_value)
     if not tx_value:
         return jsonify({'message':'Transaction validation failed'}), 400
+    
+    tx_hashed_collection.insert_one({'txHash': txHash, 'email': email})
 
     amount = tx_value * 10000
     new_balance = user.get('balance') + amount
