@@ -20,13 +20,16 @@ try:
     jwt_algorithm = 'HS256'
     eth_private_key = os.environ.get('eth_private_key')
     eth_public_key = os.environ.get('eth_public_key')
+    db_user = os.environ.get('database_user')
+    db_password = os.environ.get('database_password')
 except ValueError:
     print("Invalid secret in .env")
     sys.exit(1)
 jwt_exp = 3600
 
 CORS(app, supports_credentials=True, origins=["http://localhost:5000", "http://localhost:5173"])
-app.config['MONGO_URI'] = "mongodb://snowflake-db:27017/user_db"
+app.config['MONGO_URI'] = f"mongodb://{db_user}:{db_password}@mongo:27017/user_db?authSource=admin"
+
 try:
     time.sleep(2)
     mongo = PyMongo(app)
