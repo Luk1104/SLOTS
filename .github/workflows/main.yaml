@@ -114,24 +114,42 @@ jobs:
     needs: [build]
 
     steps:
-      - name: Download code (checkout)
-        uses: actions/checkout@v4
+      # - name: Download code (checkout)
+      #   uses: actions/checkout@v4
+
+      # - name: Start backend service
+      #   run: |
+      #     docker run -d -p 5000:5000 --name snowflake-back localhost:32000/snowflake-back:latest
+      #     sleep 15
+
+      # - name: Start frontend service
+      #   run: |
+      #     docker run -d -p 5173:5173 --name snowflake-front localhost:32000/snowflake-front:latest
+      #     sleep 10
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-images-multi
+
+      - name: Load Docker images
+        run: docker load -i images.tar
 
       - name: Start backend service
         run: |
-          docker run -d -p 5000:5000 --name snowflake-back localhost:32000/snowflake-back:latest
+          docker run -d -p 5000:5000 --name snowflake-back ${{ needs.build.outputs.backend_image_tag }}
           sleep 15
 
       - name: Start frontend service
         run: |
-          docker run -d -p 5173:5173 --name snowflake-front localhost:32000/snowflake-front:latest
+          docker run -d -p 5173:5173 --name snowflake-front ${{ needs.build.outputs.frontend_image_tag }}
           sleep 10
 
       - name: Run OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.15.0
         with:
           target: 'http://localhost:5173'
-          rules_file_name: 'owasp-zap-rules.txt'
+          rules_file_name: '.zap/rules.tsv'
         continue-on-error: true
 
       - name: Stop backend service
