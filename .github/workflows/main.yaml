@@ -109,6 +109,37 @@ jobs:
           ignore-unfixed: true
           scan-ref: '.'
 
+  DAST:
+    runs-on: self-hosted
+    needs: [build]
+
+    steps:
+      - name: Download code (checkout)
+        uses: actions/checkout@v4
+
+      - name: Start backend service
+        run: |
+          docker run -d -p 5000:5000 --name snowflake-back localhost:32000/snowflake-back:latest
+          sleep 15
+
+      - name: Start frontend service
+        run: |
+          docker run -d -p 5173:5173 --name snowflake-front localhost:32000/snowflake-front:latest
+          sleep 10
+
+      - name: Run OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.7.0
+        with:
+          target: 'http://localhost:5173'
+          rules_file_name: 'owasp-zap-rules.txt'
+        continue-on-error: true
+
+      - name: Stop backend service
+        run: docker stop snowflake-back && docker rm snowflake-back
+
+      - name: Stop frontend service
+        run: docker stop snowflake-front && docker rm snowflake-front
+
   push:
     runs-on: self-hosted
     needs: [build, SCA_and_Image-Trivy, SAST]
