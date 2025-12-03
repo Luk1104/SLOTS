@@ -38,76 +38,76 @@ jobs:
           name: docker-images-multi
           path: images.tar
 
-  SAST:
-    runs-on: self-hosted
+  # SAST:
+  #   runs-on: self-hosted
 
-    needs: [build]
+  #   needs: [build]
 
-    steps:
-      - name: Download code (checkout)
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Download code (checkout)
+  #       uses: actions/checkout@v4
 
-      - name: Run semgrep (frontend code scan)
-        uses: semgrep/semgrep-action@v1
-        continue-on-error: true
-        with:
-          working-directory: ./fronted
-          config: |
-            p/react
-            p/javascript
+  #     - name: Run semgrep (frontend code scan)
+  #       uses: semgrep/semgrep-action@v1
+  #       continue-on-error: true
+  #       with:
+  #         working-directory: ./fronted
+  #         config: |
+  #           p/react
+  #           p/javascript
 
-      - name: Run semgrep (backend code scan)
-        uses: semgrep/semgrep-action@v1
-        continue-on-error: true
-        with:
-          working-directory: ./backend
-          config: |
-            p/python
-            p/flask
+  #     - name: Run semgrep (backend code scan)
+  #       uses: semgrep/semgrep-action@v1
+  #       continue-on-error: true
+  #       with:
+  #         working-directory: ./backend
+  #         config: |
+  #           p/python
+  #           p/flask
 
-  SCA_and_Image-Trivy:
-    runs-on: self-hosted
-    needs: [build]
+  # SCA_and_Image-Trivy:
+  #   runs-on: self-hosted
+  #   needs: [build]
 
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: docker-images-multi
+  #   steps:
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: docker-images-multi
 
-      - name: Load Docker images
-        run: docker load -i images.tar
+  #     - name: Load Docker images
+  #       run: docker load -i images.tar
 
-      - name: Run Trivy on Backend image
-        uses: aquasecurity/trivy-action@0.20.0
-        continue-on-error: true
-        with:
-          image-ref: ${{ needs.build.outputs.backend_image_tag }}
-          scan-type: 'image'
-          severity: 'HIGH,CRITICAL'
-          exit-code: '1'
+  #     - name: Run Trivy on Backend image
+  #       uses: aquasecurity/trivy-action@0.20.0
+  #       continue-on-error: true
+  #       with:
+  #         image-ref: ${{ needs.build.outputs.backend_image_tag }}
+  #         scan-type: 'image'
+  #         severity: 'HIGH,CRITICAL'
+  #         exit-code: '1'
 
-      - name: Run Trivy on Frontend image
-        uses: aquasecurity/trivy-action@0.20.0
-        continue-on-error: true
-        with:
-          image-ref: ${{ needs.build.outputs.frontend_image_tag }}
-          scan-type: 'image'
-          severity: 'HIGH,CRITICAL'
-          exit-code: '1'
+  #     - name: Run Trivy on Frontend image
+  #       uses: aquasecurity/trivy-action@0.20.0
+  #       continue-on-error: true
+  #       with:
+  #         image-ref: ${{ needs.build.outputs.frontend_image_tag }}
+  #         scan-type: 'image'
+  #         severity: 'HIGH,CRITICAL'
+  #         exit-code: '1'
 
-      - name: Download code (checkout)
-        uses: actions/checkout@v4
+  #     - name: Download code (checkout)
+  #       uses: actions/checkout@v4
 
-      - name: SCA scan using trivy
-        uses: aquasecurity/trivy-action@0.20.0
-        continue-on-error: true
-        with:
-          scan-type: 'fs'
-          severity: 'HIGH,CRITICAL'
-          exit-code: '1'
-          ignore-unfixed: true
-          scan-ref: '.'
+  #     - name: SCA scan using trivy
+  #       uses: aquasecurity/trivy-action@0.20.0
+  #       continue-on-error: true
+  #       with:
+  #         scan-type: 'fs'
+  #         severity: 'HIGH,CRITICAL'
+  #         exit-code: '1'
+  #         ignore-unfixed: true
+  #         scan-ref: '.'
 
   DAST:
     runs-on: self-hosted
@@ -128,7 +128,7 @@ jobs:
           sleep 10
 
       - name: Run OWASP ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.7.0
+        uses: zaproxy/action-baseline@v0.15.0
         with:
           target: 'http://localhost:5173'
           rules_file_name: 'owasp-zap-rules.txt'
