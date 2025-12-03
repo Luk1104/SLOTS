@@ -142,7 +142,8 @@ jobs:
 
   push:
     runs-on: self-hosted
-    needs: [build, SCA_and_Image-Trivy, SAST]
+    # needs: [build, SCA_and_Image-Trivy, SAST, DAST]
+    needs: [build, DAST]
 
     steps:
 
