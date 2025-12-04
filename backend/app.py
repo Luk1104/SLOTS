@@ -76,6 +76,13 @@ def write_message():
     token = _get_token_from_request(request)
     return chat.write_message(messages_collection, data, token, jwt_secret, jwt_algorithm)
 
+@app.route('/api/delete', methods=['POST'])
+def delete_message():
+    data = request.get_json() or {}
+    token = _get_token_from_request(request)
+    msg_id = data.get('id')
+    return chat.delete_message(messages_collection, msg_id, token, jwt_secret, jwt_algorithm)
+
 @app.route('/api/read', methods=['GET'])
 def read_messages():
     return chat.read_messages(messages_collection)
