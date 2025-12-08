@@ -56,18 +56,18 @@ jobs:
       - name: Setup Python & Install semgrep
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: '3.12'
 
       - name: Install semgrep
         run: pip install --upgrade pip semgrep
 
       - name: Run semgrep (frontend -> SARIF)
         continue-on-error: true
-        run: semgrep --config p/react,p/javascript --sarif --output semgrep-frontend.sarif ./frontend || true
+        run: semgrep --config p/react,p/javascript --json --output semgrep-frontend.json ./frontend || true
 
       - name: Run semgrep (backend -> SARIF)
         continue-on-error: true
-        run: semgrep --config p/python,p/flask --sarif --output semgrep-backend.sarif ./backend || true
+        run: semgrep --config p/python,p/flask --json --output semgrep-backend.json ./backend || true
 
       - name: Upload SAST artifacts
         uses: actions/upload-artifact@v4
