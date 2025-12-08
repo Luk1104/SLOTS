@@ -52,22 +52,23 @@ jobs:
       - name: Download code (checkout)
         uses: actions/checkout@v4
 
-      # replace semgrep action (which had invalid 'working-directory' input) with semgrep CLI runs
-      - name: Setup Python & Install semgrep
-        uses: actions/setup-python@v4
+      - name: Run semgrep (frontend code scan)
+        uses: semgrep/semgrep-action@v1
+        continue-on-error: true
         with:
-          python-version: '3.15.0-alpha.1'
+          working-directory: ./frontend
+          config: |
+            p/react
+            p/javascript
 
-      - name: Install semgrep
-        run: pip install --upgrade pip semgrep
-
-      - name: Run semgrep (frontend -> SARIF)
+      - name: Run semgrep (backend code scan)
+        uses: semgrep/semgrep-action@v1
         continue-on-error: true
-        run: semgrep --config p/react,p/javascript --json --output semgrep-frontend.json ./frontend || true
-
-      - name: Run semgrep (backend -> SARIF)
-        continue-on-error: true
-        run: semgrep --config p/python,p/flask --json --output semgrep-backend.json ./backend || true
+        with:
+          working-directory: ./backend
+          config: |
+            p/python
+            p/flask
 
       - name: Upload SAST artifacts
         uses: actions/upload-artifact@v4
