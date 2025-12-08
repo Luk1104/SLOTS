@@ -2,7 +2,6 @@ on:
   push:
     branches: [ production ]
 
-# add minimal permissions so the workflow can create issues
 permissions:
   contents: read
   issues: write
