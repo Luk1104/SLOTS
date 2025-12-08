@@ -161,6 +161,7 @@ jobs:
 
       - name: Start frontend service
         run: |
+          docker rm -f snowflake-front 2>/dev/null || true
           docker run -d -p 5173:5173 --name snowflake-front ${{ needs.build.outputs.frontend_image_tag }}
 
       - name: Run OWASP ZAP Baseline Scan Frontend
