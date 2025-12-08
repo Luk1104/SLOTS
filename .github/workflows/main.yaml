@@ -56,7 +56,7 @@ jobs:
       - name: Setup Python & Install semgrep
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: '3.11'
 
       - name: Install semgrep
         run: pip install --upgrade pip semgrep
@@ -74,8 +74,8 @@ jobs:
         with:
           name: sast-semgrep-reports
           path: |
-            semgrep-frontend.sarif
-            semgrep-backend.sarif
+            semgrep-frontend.json
+            semgrep-backend.json
 
   SCA_and_Image-Trivy:
     runs-on: self-hosted
