@@ -2,6 +2,11 @@ on:
   push:
     branches: [ production ]
 
+# add minimal permissions so the workflow can create issues
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   build:
     runs-on: self-hosted
@@ -47,23 +52,30 @@ jobs:
       - name: Download code (checkout)
         uses: actions/checkout@v4
 
-      - name: Run semgrep (frontend code scan)
-        uses: semgrep/semgrep-action@v1
-        continue-on-error: true
+      # replace semgrep action (which had invalid 'working-directory' input) with semgrep CLI runs
+      - name: Setup Python & Install semgrep
+        uses: actions/setup-python@v4
         with:
-          working-directory: ./fronted
-          config: |
-            p/react
-            p/javascript
+          python-version: '3.x'
 
-      - name: Run semgrep (backend code scan)
-        uses: semgrep/semgrep-action@v1
+      - name: Install semgrep
+        run: pip install --upgrade pip semgrep
+
+      - name: Run semgrep (frontend -> SARIF)
         continue-on-error: true
+        run: semgrep --config p/react,p/javascript --sarif --output semgrep-frontend.sarif ./frontend || true
+
+      - name: Run semgrep (backend -> SARIF)
+        continue-on-error: true
+        run: semgrep --config p/python,p/flask --sarif --output semgrep-backend.sarif ./backend || true
+
+      - name: Upload SAST artifacts
+        uses: actions/upload-artifact@v4
         with:
-          working-directory: ./backend
-          config: |
-            p/python
-            p/flask
+          name: sast-semgrep-reports
+          path: |
+            semgrep-frontend.sarif
+            semgrep-backend.sarif
 
   SCA_and_Image-Trivy:
     runs-on: self-hosted
@@ -152,6 +164,7 @@ jobs:
           docker run -d -p 5173:5173 --name snowflake-front ${{ needs.build.outputs.frontend_image_tag }}
 
       - name: Run OWASP ZAP Baseline Scan Frontend
+        id: zap_baseline
         uses: zaproxy/action-baseline@v0.15.0
         continue-on-error: true
         with:
@@ -172,6 +185,12 @@ jobs:
 
       # - name: Stop database service
       #   run: docker stop snowflake-db && docker rm snowflake-db
+
+      - name: Upload DAST artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dast-zap-reports
+          path: zap-artifacts
 
   push:
     runs-on: self-hosted
