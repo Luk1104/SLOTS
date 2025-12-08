@@ -59,7 +59,7 @@ jobs:
           config: |
             p/react
             p/javascript
-          args: --json --output semgrep-frontend.json
+            --json --output semgrep-frontend.json
 
       - name: Run semgrep (backend code scan)
         uses: semgrep/semgrep-action@v1
@@ -69,7 +69,7 @@ jobs:
           config: |
             p/python
             p/flask
-          args: --json --output semgrep-backend.json
+            --json --output semgrep-backend.json
 
       - name: Upload SAST artifacts
         uses: actions/upload-artifact@v4
@@ -147,7 +147,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: docker-images-multix
+          name: docker-images-multi
 
       - name: Load Docker images
         run: docker load -i images.tar
