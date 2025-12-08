@@ -56,7 +56,7 @@ jobs:
       - name: Setup Python & Install semgrep
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.15.0-alpha.1'
 
       - name: Install semgrep
         run: pip install --upgrade pip semgrep
@@ -170,6 +170,19 @@ jobs:
         with:
           target: 'http://localhost:5173'
           #rules_file_name: '.zap/rules.tsv'
+
+      - name: Collect ZAP outputs
+        continue-on-error: true
+        run: |
+          mkdir -p zap-artifacts
+          # copy common possible output names produced by ZAP baseline action
+          [ -f zap-frontend.json ] && cp zap-frontend.json zap-artifacts/ || true
+          [ -f zap-report.json ] && cp zap-report.json zap-artifacts/ || true
+          [ -f zap_report.json ] && cp zap_report.json zap-artifacts/ || true
+          [ -f baseline-report.json ] && cp baseline-report.json zap-artifacts/ || true
+          [ -f zap-report.html ] && cp zap-report.html zap-artifacts/ || true
+          [ -d .zap ] && cp -r .zap zap-artifacts/ || true
+          ls -la zap-artifacts || true
 
       # - name: Run OWASP ZAP Baseline Scan Backend
       #   uses: zaproxy/action-baseline@v0.15.0
