@@ -84,6 +84,8 @@ jobs:
         with:
           image-ref: ${{ needs.build.outputs.backend_image_tag }}
           scan-type: 'image'
+          format: 'json'
+          output: 'trivy-backend.json'
           severity: 'HIGH,CRITICAL'
           exit-code: '1'
 
@@ -93,6 +95,8 @@ jobs:
         with:
           image-ref: ${{ needs.build.outputs.frontend_image_tag }}
           scan-type: 'image'
+          format: 'json'
+          output: 'trivy-frontend.json'
           severity: 'HIGH,CRITICAL'
           exit-code: '1'
 
@@ -104,18 +108,28 @@ jobs:
         continue-on-error: true
         with:
           scan-type: 'fs'
+          format: 'json'
+          output: 'trivy-fs.json'
           severity: 'HIGH,CRITICAL'
           scanners: 'vuln,secret,misconfig'
           exit-code: '1'
           ignore-unfixed: true
           scan-ref: '.'
 
+      - name: Upload SCA & image scan artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sca-trivy-reports
+          path: |
+            trivy-backend.json
+            trivy-frontend.json
+            trivy-fs.json
+
   DAST:
     runs-on: self-hosted
     needs: [build]
 
     steps:
-
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
@@ -139,10 +153,10 @@ jobs:
 
       - name: Run OWASP ZAP Baseline Scan Frontend
         uses: zaproxy/action-baseline@v0.15.0
+        continue-on-error: true
         with:
           target: 'http://localhost:5173'
           #rules_file_name: '.zap/rules.tsv'
-        continue-on-error: true
 
       # - name: Run OWASP ZAP Baseline Scan Backend
       #   uses: zaproxy/action-baseline@v0.15.0
@@ -165,7 +179,6 @@ jobs:
     #needs: [build, DAST]
 
     steps:
-
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
