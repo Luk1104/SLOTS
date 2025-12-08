@@ -59,7 +59,6 @@ jobs:
           config: |
             p/react
             p/javascript
-            --json --output semgrep-frontend.json
 
       - name: Run semgrep (backend code scan)
         uses: semgrep/semgrep-action@v1
@@ -69,7 +68,6 @@ jobs:
           config: |
             p/python
             p/flask
-            --json --output semgrep-backend.json
 
       - name: Upload SAST artifacts
         uses: actions/upload-artifact@v4
