@@ -16,7 +16,7 @@ import spingen
 app = Flask(__name__)
 load_dotenv()
 try:
-    jwt_token = os.environ.get('jwt-token-secret')
+    jwt_secret = os.environ.get('jwt-token-secret')
     jwt_algorithm = 'HS256'
     eth_private_key = os.environ.get('eth-private-key')
     eth_public_key = os.environ.get('eth-public-key')
