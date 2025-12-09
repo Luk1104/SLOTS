@@ -100,7 +100,7 @@ const Payment = () => {
 
       // send txHash to backend with JWT
       const token = window.localStorage.getItem("token");
-      const endpoint = "http://localhost:5000/api/deposit";
+      const endpoint = "/api/deposit";
       const resp = await fetch(endpoint, {
         method: "POST",
         headers: {
@@ -136,7 +136,7 @@ const Payment = () => {
     setTransactionHash(""); // Reset hash on new attempt
     setIsLoading(true);
 
-    const endpoint = "http://localhost:5000/api/withdraw";
+    const endpoint = "/api/withdraw";
     try {
       const token = window.localStorage.getItem("token");
       if (!token) {

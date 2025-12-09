@@ -1,3 +1,3 @@
 # Snowflake-Casino
 
-nowy commit test CI/CD
+Snowflake webapp game integrated with crypto sepolia ETH web3

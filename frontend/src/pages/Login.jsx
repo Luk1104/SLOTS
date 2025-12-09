@@ -32,7 +32,7 @@ const Login = () => {
     setError("");
     setIsLoading(true);
 
-    const endpoint = 'http://localhost:5000/api/login';
+    const endpoint = '/api/login';
   
     try {
       const response = await fetch(endpoint, {

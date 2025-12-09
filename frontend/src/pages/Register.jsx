@@ -44,7 +44,7 @@ const Register = () => {
     }
 
     setIsLoading(true); 
-    const endpoint = 'http://localhost:5000/api/register'; 
+    const endpoint = '/api/register'; 
 
     try {
       const response = await fetch(endpoint, {

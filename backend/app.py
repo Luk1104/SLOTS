@@ -27,8 +27,9 @@ except ValueError:
     sys.exit(1)
 jwt_exp = 3600
 
-CORS(app, supports_credentials=True, origins=["http://localhost:5000", "http://localhost:5173"])
-app.config['MONGO_URI'] = f"mongodb://{db_user}:{db_password}@mongo:27017/user_db?authSource=admin"
+CORS(app, supports_credentials=True, origins=["http://localhost:5000", "http://frontend-service:5173"])
+app.config['MONGO_URI'] = f"mongodb://mongodb-service.default:27017/database"
+#f"mongodb://{db_user}:{db_password}@mongo:27017/user_db?authSource=admin"
 
 try:
     time.sleep(2)
@@ -102,6 +103,3 @@ async def deposit():
 @app.route('/', methods=['GET'])
 def main():
     return jsonify({'message': 'API running'}), 200
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
