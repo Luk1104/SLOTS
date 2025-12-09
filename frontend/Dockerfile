@@ -3,7 +3,7 @@ FROM node:alpine AS build
 
 WORKDIR /app
 
-COPY frontend/ /app
+COPY . /app
 
 RUN npm install && npm run build
 
