@@ -62,7 +62,7 @@ const Chat = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const response = await fetch(endpoint + "/read");
+        const response = await fetch(endpoint + "/read", { method: "POST" });
         if (response.ok) {
           const data = await response.json();
           setMessages(data.messages || []);
