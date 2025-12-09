@@ -18,10 +18,10 @@ load_dotenv()
 try:
     jwt_secret = os.environ.get('jwt_secret')
     jwt_algorithm = 'HS256'
-    eth_private_key = os.environ.get('eth_private_key')
-    eth_public_key = os.environ.get('eth_public_key')
-    db_user = os.environ.get('database_user')
-    db_password = os.environ.get('database_password')
+    eth_private_key = os.environ.get('eth-private-key')
+    eth_public_key = os.environ.get('eth-public-key')
+    #db_user = os.environ.get('database_user')
+    #db_password = os.environ.get('database_password')
 except ValueError:
     print("Invalid secret in .env")
     sys.exit(1)
