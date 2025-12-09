@@ -4,7 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Payment from "./pages/Payment";
 
-export const endpoint = "http://localhost:5000/api";
+export const endpoint = "/api";
 
 const App = () => {
   return (
