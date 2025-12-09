@@ -6,5 +6,6 @@ flask_cors
 dotenv
 pyjwt
 gunicorn
+uvicorn[standard]
 web3
 asgiref
