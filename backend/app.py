@@ -20,16 +20,16 @@ try:
     jwt_algorithm = 'HS256'
     eth_private_key = os.environ.get('eth-private-key')
     eth_public_key = os.environ.get('eth-public-key')
-    #db_user = os.environ.get('database_user')
-    #db_password = os.environ.get('database_password')
+    db_user = os.environ.get('MONGO_INITDB_ROOT_USERNAME')
+    db_password = os.environ.get('MONGO_INITDB_ROOT_PASSWORD')
 except ValueError:
     print("Invalid secret in .env")
     sys.exit(1)
 jwt_exp = 3600
 
 CORS(app, supports_credentials=True, origins=["http://localhost:5000", "http://frontend-service:5173"])
-app.config['MONGO_URI'] = "mongodb://mongodb-service.default:27017/database"
-#f"mongodb://{db_user}:{db_password}@mongo:27017/user_db?authSource=admin"
+app.config['MONGO_URI'] = f"mongodb://{db_user}:{db_password}@mongo:27017/user_db?authSource=admin"
+#"mongodb://mongodb-service.default:27017/database"
 
 try:
     time.sleep(2)
