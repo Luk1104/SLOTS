@@ -28,7 +28,7 @@ except ValueError:
 jwt_exp = 3600
 
 CORS(app, supports_credentials=True, origins=["http://localhost:5000", "http://frontend-service:5173"])
-app.config['MONGO_URI'] = f"mongodb://{db_user}:{db_password}@mongo:27017/user_db?authSource=admin"
+app.config['MONGO_URI'] = f"mongodb://{db_user}:{db_password}@mongodb-service.default:27017/user_db?authSource=admin"
 #"mongodb://mongodb-service.default:27017/database"
 
 try:
