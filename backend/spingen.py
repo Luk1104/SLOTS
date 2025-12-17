@@ -83,7 +83,11 @@ def spin(data, token, users_collection, jwt_secret, jwt_algorithm):
     else:
         win_multiplier = 0
 
-    new_balance = balance - bet + (bet * win_multiplier)
+    prize = bet * win_multiplier
+    new_balance = balance - bet + prize
+
+    if win_multiplier > 0:
+        print(f"[INFO] {email} won {prize} with a {win_multiplier}x multiplier on a {bet} bet", flush=True)
 
     users_collection.update_one(
         {'email': email},

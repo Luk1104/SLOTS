@@ -81,6 +81,7 @@ def withdraw(users_collection, data, token, jwt_secret, jwt_algorithm, eth_publi
 
     points_to_eth = amount / 10000
     trans_hash = sendTransaction(points_to_eth, eth_public_key, address, eth_private_key)
+    print(f"[INFO] {email} withdrew {amount} points to {address}. Transaction hash: {trans_hash}", flush=True)
     return jsonify({'balance': new_balance, 'hash': trans_hash}), 200
 
 async def deposit(users_collection, tx_hashed_collection, data, token, jwt_secret, jwt_algorithm):
@@ -111,4 +112,5 @@ async def deposit(users_collection, tx_hashed_collection, data, token, jwt_secre
         {'$set': {'balance': new_balance}}
     )
 
+    print(f"[INFO] {email} deposited {tx_value} ETH from transaction {txHash}", flush=True)
     return jsonify({'balance': new_balance}), 200
