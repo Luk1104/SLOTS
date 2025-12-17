@@ -62,7 +62,7 @@ def delete_message(messages_collection, id, token, jwt_secret, jwt_algorithm):
     if result.deleted_count == 0:
         return jsonify({'message': 'Message not found'}), 404
 
-    print(f"[INFO] admin deleted message {id}", flush=True)
+    print(f"[MONITOR] admin deleted message {id}", flush=True)
     messages = list(messages_collection.find().sort("timestamp", 1).limit(100))
     for m in messages:
         m["_id"] = str(m["_id"])

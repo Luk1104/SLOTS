@@ -19,7 +19,7 @@ def register(users_collection, data):
     users_collection.insert_one(
         {"email": email, "password": hashed_password, "balance": 100}
     )
-    print(f"[INFO] {email} registered", flush=True)
+    print(f"[MONITOR] {email} registered", flush=True)
     return jsonify({"message": "registered"}), 201
 
 
@@ -34,7 +34,7 @@ def login(users_collection, data, jwt_secret, jwt_algorithm, jwt_exp):
         payload = {"exp": int(time.time()) + jwt_exp, "sub": email}
         token = jwt.encode(payload, jwt_secret, algorithm=jwt_algorithm)
         balance = user.get("balance")
-        print(f"[INFO] {email} logged in", flush=True)
+        print(f"[MONITOR] {email} logged in", flush=True)
         return jsonify({"token": token, "balance": balance}), 200
 
     return jsonify({"message": "Invalid credentials"}), 401
