@@ -42,40 +42,42 @@ jobs:
           name: docker-images-multi
           path: images.tar
 
-  # SAST:
-  #   runs-on: self-hosted
+  SAST:
+    runs-on: self-hosted
 
-  #   needs: [build]
+    needs: [build]
 
-  #   steps:
-  #     - name: Download code (checkout)
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Download code (checkout)
+        uses: actions/checkout@v4
 
-  #     - name: Run semgrep (frontend code scan)
-  #       uses: semgrep/semgrep-action@v1
-  #       continue-on-error: true
-  #       with:
-  #         working-directory: ./frontend
-  #         config: |
-  #           p/react
-  #           p/javascript
+      - name: Run semgrep (frontend code scan)
+        uses: semgrep/semgrep-action@v1
+        continue-on-error: true
+        with:
+          working-directory: ./frontend
+          config: |
+            p/react
+            p/javascript
+          args: --json --output semgrep-frontend.json
 
-  #     - name: Run semgrep (backend code scan)
-  #       uses: semgrep/semgrep-action@v1
-  #       continue-on-error: true
-  #       with:
-  #         working-directory: ./backend
-  #         config: |
-  #           p/python
-  #           p/flask
+      - name: Run semgrep (backend code scan)
+        uses: semgrep/semgrep-action@v1
+        continue-on-error: true
+        with:
+          working-directory: ./backend
+          config: |
+            p/python
+            p/flask
+          args: --json --output semgrep-backend.json
 
-  #     - name: Upload SAST artifacts
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: sast-semgrep-reports
-  #         path: |
-  #           semgrep-frontend.json
-  #           semgrep-backend.json
+      - name: Upload SAST artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sast-semgrep-reports
+          path: |
+            frontend/semgrep-frontend.json
+            backend/semgrep-backend.json
 
   # SCA_and_Image-Trivy:
   #   runs-on: self-hosted
@@ -209,7 +211,7 @@ jobs:
   push:
     runs-on: self-hosted
     #needs: [build, SCA_and_Image-Trivy, SAST, DAST]
-    needs: [build]
+    needs: [build, SAST]
 
     steps:
       - name: Download artifact
